@@ -82,5 +82,5 @@ app.delete('/atividades/:id', async (req, res) => {
   }
 });
 
-// Iniciar servidor (somente uma vez!)
+// Iniciar servidor (apenas uma vez)
 app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
