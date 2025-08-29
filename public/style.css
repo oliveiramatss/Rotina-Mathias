@@ -1,13 +1,15 @@
 body {
   font-family: Arial, sans-serif;
-  background: #f0f8ff;
+  background-color: #f0f8ff; /* cor de fallback */
   padding: 20px;
   max-width: 600px;
   margin: auto;
   transition: background-image 1s ease-in-out;
-  background-size: auto;
-  background-position: center;
+
+  /* Inicial, será sobrescrito pelo JS */
   background-repeat: repeat;
+  background-position: center;
+  background-size: auto;
 }
 
 h1,
