@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Rotina do Mathias</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Rotina do Mathias 👶</h1>
+
+  <div class="form">
+    <button id="btnAlimentacao">🍽️ Alimentação</button>
+    <button id="btnFralda">🚼 Troca de Fralda</button>
+    <button id="btnSono">💤 Sono</button>
+  </div>
+
+  <!-- Alimentação -->
+  <div id="alimentacaoOpcoes" class="hidden">
+    <h2>Selecione o tipo de alimentação</h2>
+    <button id="btnMamadeira">🍼 Mamadeira</button>
+    <button id="btnComida">🍲 Comida</button>
+  </div>
+
+  <!-- Mamadeira -->
+  <div id="mamadeiraOpcoes" class="hidden">
+    <h3>Quantidade (ml)</h3>
+    <div class="quantidades"></div>
+    <p>Escolher horário (opcional): <input type="time" id="mamadeiraHora"></p>
+    <button id="btnMamadeiraEnviar">Enviar</button>
+    <button id="btnMamadeiraAgora">Agora</button>
+  </div>
+
+  <!-- Comida -->
+  <div id="comidaOpcoes" class="hidden">
+    <h3>Descreva a refeição</h3>
+    <input type="text" id="comidaInput" placeholder="Ex: Papinha de legumes">
+    <p>Escolher horário (opcional): <input type="time" id="comidaHora"></p>
+    <button id="btnComidaEnviar">Enviar</button>
+    <button id="btnComidaAgora">Agora</button>
+  </div>
+
+  <!-- Fralda -->
+  <div id="fraldaOpcoes" class="hidden">
+    <h2>Selecione o tipo de fralda</h2>
+    <p>Escolher horário (opcional): <input type="time" id="fraldaHora"></p>
+    <button id="btnXixiEnviar">Enviar 💧 Xixi</button>
+    <button id="btnXixiAgora">Agora 💧 Xixi</button>
+    <button id="btnCocoEnviar">Enviar 💩 Cocô</button>
+    <button id="btnCocoAgora">Agora 💩 Cocô</button>
+    <button id="btnMistoEnviar">Enviar 🌀 Misto</button>
+    <button id="btnMistoAgora">Agora 🌀 Misto</button>
+  </div>
+
+  <!-- Sono -->
+  <div id="sonoOpcoes" class="hidden">
+    <h2>Registre o Sono</h2>
+    <p id="sonoAviso"></p>
+    <button id="btnDormiu">💤 Dormiu</button>
+    <button id="btnAcordou">⏰ Acordou</button>
+  </div>
+
+  <h2>Atividades registradas</h2>
+  <div id="atividades"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
