@@ -6,8 +6,6 @@ const path = require('path');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
-
 
 // Middlewares
 app.use(cors());
@@ -84,5 +82,5 @@ app.delete('/atividades/:id', async (req, res) => {
   }
 });
 
-// Iniciar servidor
-app.listen(port, () => console.log(`Servidor rodando na porta ${port}`));
+// Iniciar servidor (somente uma vez!)
+app.listen(PORT, () => console.log(`Servidor rodando na porta ${PORT}`));
