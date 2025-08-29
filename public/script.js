@@ -266,6 +266,6 @@ function changeBackground() {
 // Inicializa com a primeira imagem
 changeBackground();
 
-// Troca de background a cada 5 segundos (5000 ms)
-setInterval(changeBackground, 5000);
+// Troca de background a cada 1 minuto (100000 ms)
+setInterval(changeBackground, 100000);
 
