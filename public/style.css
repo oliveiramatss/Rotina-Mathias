@@ -9,7 +9,7 @@ body {
   /* Inicial, será sobrescrito pelo JS */
   background-repeat: repeat;
   background-position: center;
-  background-size: auto;
+  background-size: cover;
 }
 
 h1,
