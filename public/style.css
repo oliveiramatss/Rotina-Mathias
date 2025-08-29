@@ -5,7 +5,7 @@ body {
   max-width: 600px;
   margin: auto;
   transition: background-image 1s ease-in-out;
-  background-size: cover;
+  background-size: auto;
   background-position: center center;
   background-repeat: repeat;
 }
