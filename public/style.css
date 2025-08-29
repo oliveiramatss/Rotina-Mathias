@@ -6,7 +6,7 @@ body {
   margin: auto;
   transition: background-image 1s ease-in-out;
   background-size: auto;
-  background-position: center center;
+  background-position: center;
   background-repeat: repeat;
 }
 
