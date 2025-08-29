@@ -249,15 +249,23 @@ const backgrounds = [
   "img/foto3.jpg"
 ];
 
-let bgIndex = 0;
+let index = 0;
+const body = document.body;
 
-function trocarBackground() {
-  document.body.style.backgroundImage = `url(${backgrounds[bgIndex]})`;
-  bgIndex = (bgIndex + 1) % backgrounds.length;
+// Função para mudar o background
+function changeBackground() {
+  body.style.backgroundImage = `url('${backgrounds[index]}')`;
+  body.style.backgroundRepeat = "repeat";   // garante repetição
+  body.style.backgroundPosition = "center"; // centraliza cada tile
+  body.style.backgroundSize = "auto";       // mantém tamanho original
+
+  // Próxima imagem
+  index = (index + 1) % backgrounds.length;
 }
 
-// Inicializa o background
-trocarBackground();
+// Inicializa com a primeira imagem
+changeBackground();
 
-// Alterna a cada 20 minutos
-setInterval(trocarBackground, 1 * 60 * 1000);
+// Troca de background a cada 5 segundos (5000 ms)
+setInterval(changeBackground, 5000);
+
