@@ -7,9 +7,9 @@ body {
   transition: background-image 1s ease-in-out;
 
   /* Inicial, será sobrescrito pelo JS */
-  background-repeat: repeat;
-  background-position: center;
-  background-size: cover;
+ background-repeat: repeat;
+  background-position: top left; /* cada tile começa do canto */
+  background-size: 100px 100px; /* define o tamanho pequeno da imagem */
 }
 
 h1,
