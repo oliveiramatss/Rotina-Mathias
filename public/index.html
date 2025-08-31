@@ -5,6 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Rotina do Mathias</title>
   <link rel="stylesheet" href="style.css">
+  <style>
+    .hidden { display: none; }
+    button { margin: 5px; }
+  </style>
 </head>
 <body>
   <h1>Rotina do Mathias 👶</h1>
@@ -25,7 +29,11 @@
   <!-- Mamadeira -->
   <div id="mamadeiraOpcoes" class="hidden">
     <h3>Quantidade (ml)</h3>
-    <div class="quantidades"></div>
+    <div class="quantidades">
+      <button class="quant">30</button>
+      <button class="quant">60</button>
+      <button class="quant">90</button>
+    </div>
     <p>Escolher horário (opcional): <input type="time" id="mamadeiraHora"></p>
     <button id="btnMamadeiraEnviar">Enviar</button>
     <button id="btnMamadeiraAgora">Agora</button>
