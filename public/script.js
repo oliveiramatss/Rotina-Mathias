@@ -4,12 +4,12 @@ let mlSelecionado = null;
 const API = "http://192.168.1.12:3000/atividades";
 
 // === Funções de exibição ===
-function esconderMenus() {
+function mostrarDiv(id) {
   document.querySelectorAll("#alimentacaoOpcoes, #mamadeiraOpcoes, #comidaOpcoes, #fraldaOpcoes, #sonoOpcoes")
     .forEach(el => el.classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
 }
 
-// === Funções auxiliares ===
 function limparInputs() {
   mlSelecionado = null;
   document.getElementById("mamadeiraHora").value = "";
@@ -18,16 +18,18 @@ function limparInputs() {
   document.getElementById("fraldaHora").value = "";
 }
 
-function gerarDataComHora(horaInput) {
+// === Datas ===
+function gerarDataComHora(horaInput){
   const hoje = new Date();
-  if(!horaInput) return hoje.toLocaleString("pt-BR");
-  const [h,m] = horaInput.split(":").map(Number);
-  hoje.setHours(h,m,0,0);
-  return hoje.toLocaleString("pt-BR");
+  if(horaInput){
+    const [h,m] = horaInput.split(":").map(Number);
+    hoje.setHours(h,m,0,0);
+  }
+  return hoje.toISOString();
 }
 
 function parseBRDateTime(str){
-  // Caso venha em ISO do backend
+  // ISO do backend
   if(str.includes("T")) return new Date(str);
 
   // Caso venha em "31/08/2025, 14:30:00"
@@ -37,15 +39,22 @@ function parseBRDateTime(str){
   return new Date(year, month-1, day, h, m, s || 0);
 }
 
-
 // === Funções de registro ===
 async function salvarAtividade(atividade) {
-  await fetch(API, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(atividade) });
+  await fetch(API, {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(atividade)
+  });
   carregarAtividades();
 }
 
 async function atualizarAtividade(id, atividade) {
-  await fetch(`${API}/${id}`, { method:"PUT", headers:{"Content-Type":"application/json"}, body:JSON.stringify(atividade) });
+  await fetch(`${API}/${id}`, {
+    method:"PUT",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify(atividade)
+  });
   carregarAtividades();
 }
 
@@ -60,13 +69,23 @@ function selecionarMl(ml){ mlSelecionado = ml; }
 async function registrarMamadeiraComHora(){
   const hora = document.getElementById("mamadeiraHora").value;
   if(!mlSelecionado) return alert("Selecione a quantidade!");
-  await salvarAtividade({ texto:`Mamadeira (${mlSelecionado} ml)`, data:gerarDataComHora(hora), tipo:"mamadeira", categoria:"Alimentação" });
+  await salvarAtividade({
+    texto:`Mamadeira (${mlSelecionado} ml)`,
+    data_inicio: gerarDataComHora(hora),
+    tipo:"mamadeira",
+    categoria:"Alimentação"
+  });
   limparInputs();
 }
 
 async function registrarMamadeiraAgora(){
   if(!mlSelecionado) return alert("Selecione a quantidade!");
-  await salvarAtividade({ texto:`Mamadeira (${mlSelecionado} ml)`, data:new Date().toLocaleString("pt-BR"), tipo:"mamadeira", categoria:"Alimentação" });
+  await salvarAtividade({
+    texto:`Mamadeira (${mlSelecionado} ml)`,
+    data_inicio: new Date().toISOString(),
+    tipo:"mamadeira",
+    categoria:"Alimentação"
+  });
   limparInputs();
 }
 
@@ -75,39 +94,59 @@ async function registrarComida(){
   const input = document.getElementById("comidaInput");
   if(!input.value.trim()) return alert("Digite a refeição!");
   const hora = document.getElementById("comidaHora").value;
-  await salvarAtividade({ texto:`Comida: ${input.value.trim()}`, data:gerarDataComHora(hora), tipo:"comida", categoria:"Alimentação" });
+  await salvarAtividade({
+    texto:`Comida: ${input.value.trim()}`,
+    data_inicio: gerarDataComHora(hora),
+    tipo:"comida",
+    categoria:"Alimentação"
+  });
   limparInputs();
 }
 
 async function registrarComidaAgora(){
   const input = document.getElementById("comidaInput");
   if(!input.value.trim()) return alert("Digite a refeição!");
-  await salvarAtividade({ texto:`Comida: ${input.value.trim()}`, data:new Date().toLocaleString("pt-BR"), tipo:"comida", categoria:"Alimentação" });
+  await salvarAtividade({
+    texto:`Comida: ${input.value.trim()}`,
+    data_inicio: new Date().toISOString(),
+    tipo:"comida",
+    categoria:"Alimentação"
+  });
   limparInputs();
 }
 
 // === Fralda ===
 async function registrarFralda(tipo){
   const hora = document.getElementById("fraldaHora").value;
-  await salvarAtividade({ texto:tipo, data:gerarDataComHora(hora), tipo:"fralda", categoria:"Fralda" });
+  await salvarAtividade({
+    texto:tipo,
+    data_inicio: gerarDataComHora(hora),
+    tipo:"fralda",
+    categoria:"Fralda"
+  });
   limparInputs();
 }
+
 async function registrarFraldaAgora(tipo){
-  await salvarAtividade({ texto:tipo, data:new Date().toLocaleString("pt-BR"), tipo:"fralda", categoria:"Fralda" });
+  await salvarAtividade({
+    texto:tipo,
+    data_inicio: new Date().toISOString(),
+    tipo:"fralda",
+    categoria:"Fralda"
+  });
 }
 
 // === Sono ===
 async function registrarSono(tipo){
-  const agora = new Date().toLocaleString("pt-BR");
   const aviso = document.getElementById("sonoAviso");
 
   if(tipo==="💤 Dormiu"){
-    dormiuHora = agora;
-    aviso.textContent=`Hora de dormir: ${agora.split(" ")[1]}`;
+    dormiuHora = new Date().toISOString();
+    aviso.textContent=`Hora de dormir: ${new Date(dormiuHora).toLocaleTimeString('pt-BR')}`;
   }
   else if(tipo==="⏰ Acordou"){
     if(!dormiuHora) return alert("Registre primeiro a hora que dormiu!");
-    const dormiu = parseBRDateTime(dormiuHora);
+    const dormiu = new Date(dormiuHora);
     const acordou = new Date();
     let diffMs = acordou - dormiu;
     if(diffMs < 0) diffMs += 24*60*60*1000;
@@ -120,7 +159,7 @@ async function registrarSono(tipo){
 
     await salvarAtividade({
       texto:`Dormiu às ${dormiu.toLocaleTimeString('pt-BR')} e acordou às ${acordou.toLocaleTimeString('pt-BR')} — ${hStr}h:${mStr}m`,
-      data:agora,
+      data_inicio: new Date().toISOString(),
       tipo:"sono",
       categoria:"Sono"
     });
@@ -139,13 +178,13 @@ async function carregarAtividades() {
 
   const dias = {};
   atividades.forEach(atv => {
-    const dataObj = parseBRDateTime(atv.data);
+    const dataObj = parseBRDateTime(atv.data_inicio);
     const diaStr = dataObj.toLocaleDateString("pt-BR");
     if(!dias[diaStr]) dias[diaStr] = [];
     dias[diaStr].push({ ...atv, dataObj });
   });
 
-  const diasOrdenados = Object.keys(dias).sort((a,b) => {
+  const diasOrdenados = Object.keys(dias).sort((a,b)=>{
     const [da, ma, aa] = a.split("/").map(Number);
     const [db, mb, ab] = b.split("/").map(Number);
     return new Date(ab, mb-1, db) - new Date(aa, ma-1, da);
@@ -163,7 +202,6 @@ async function carregarAtividades() {
 
     const conteudo = document.createElement("div");
     conteudo.className = "dia-conteudo";
-
     if(dia === hojeStr) conteudo.classList.add("ativo");
 
     header.onclick = () => {
@@ -186,18 +224,16 @@ async function carregarAtividades() {
       titulo.textContent = cat;
       catDiv.appendChild(titulo);
 
-      categorias[cat]
-        .sort((a,b)=> b.dataObj - a.dataObj)
-        .forEach(atv => {
-          const card = document.createElement("div");
-          card.className = "atividade";
+      categorias[cat].sort((a,b)=> b.dataObj - a.dataObj).forEach(atv => {
+        const card = document.createElement("div");
+        card.className = "atividade";
 
-          card.innerHTML = `<p><b>${atv.dataObj.toLocaleTimeString("pt-BR")}</b> → ${atv.texto}</p>
-                            <button onclick="atualizarAtividadePrompt(${atv.id})">✏️ Editar</button>
-                            <button onclick="excluirAtividade(${atv.id})">❌ Excluir</button>`;
+        card.innerHTML = `<p><b>${atv.dataObj.toLocaleTimeString("pt-BR")}</b> → ${atv.texto}</p>
+                          <button onclick="atualizarAtividadePrompt(${atv.id})">✏️ Editar</button>
+                          <button onclick="excluirAtividade(${atv.id})">❌ Excluir</button>`;
 
-          catDiv.appendChild(card);
-        });
+        catDiv.appendChild(card);
+      });
 
       conteudo.appendChild(catDiv);
     });
@@ -207,17 +243,16 @@ async function carregarAtividades() {
   });
 }
 
-// === Auto refresh a cada 2 minutos ===
+// === Auto refresh ===
 setInterval(carregarAtividades, 2*60*1000);
 
-// === Botões principais ===
-document.getElementById("btnAlimentacao").addEventListener("click",()=>{ esconderMenus(); document.getElementById("alimentacaoOpcoes").classList.remove("hidden"); });
-document.getElementById("btnFralda").addEventListener("click",()=>{ esconderMenus(); document.getElementById("fraldaOpcoes").classList.remove("hidden"); });
-document.getElementById("btnSono").addEventListener("click",()=>{ esconderMenus(); document.getElementById("sonoOpcoes").classList.remove("hidden"); });
+// === Botões principais e submenus ===
+document.getElementById("btnAlimentacao").addEventListener("click",()=>mostrarDiv("alimentacaoOpcoes"));
+document.getElementById("btnFralda").addEventListener("click",()=>mostrarDiv("fraldaOpcoes"));
+document.getElementById("btnSono").addEventListener("click",()=>mostrarDiv("sonoOpcoes"));
 
 document.getElementById("btnMamadeira").addEventListener("click",()=>{
-  document.getElementById("mamadeiraOpcoes").classList.remove("hidden");
-  document.getElementById("comidaOpcoes").classList.add("hidden");
+  mostrarDiv("mamadeiraOpcoes");
   const div=document.querySelector(".quantidades"); 
   div.innerHTML="";
   for(let ml=90; ml<=300; ml+=30){ 
@@ -227,21 +262,14 @@ document.getElementById("btnMamadeira").addEventListener("click",()=>{
     div.appendChild(btn); 
   } 
 });
+document.getElementById("btnComida").addEventListener("click",()=>mostrarDiv("comidaOpcoes"));
 
-document.getElementById("btnComida").addEventListener("click",()=>{
-  document.getElementById("comidaOpcoes").classList.remove("hidden");
-  document.getElementById("mamadeiraOpcoes").classList.add("hidden");
-});
-
-// Mamadeira
+// Eventos registro
 document.getElementById("btnMamadeiraEnviar").addEventListener("click", registrarMamadeiraComHora);
 document.getElementById("btnMamadeiraAgora").addEventListener("click", registrarMamadeiraAgora);
-
-// Comida
 document.getElementById("btnComidaEnviar").addEventListener("click", registrarComida);
 document.getElementById("btnComidaAgora").addEventListener("click", registrarComidaAgora);
 
-// Fralda
 document.getElementById("btnXixiEnviar").addEventListener("click", ()=>registrarFralda('💧 Xixi'));
 document.getElementById("btnXixiAgora").addEventListener("click", ()=>registrarFraldaAgora('💧 Xixi'));
 document.getElementById("btnCocoEnviar").addEventListener("click", ()=>registrarFralda('💩 Cocô'));
@@ -249,23 +277,16 @@ document.getElementById("btnCocoAgora").addEventListener("click", ()=>registrarF
 document.getElementById("btnMistoEnviar").addEventListener("click", ()=>registrarFralda('🌀 Misto'));
 document.getElementById("btnMistoAgora").addEventListener("click", ()=>registrarFraldaAgora('🌀 Misto'));
 
-// Sono
 document.getElementById("btnDormiu").addEventListener("click", ()=>registrarSono('💤 Dormiu'));
 document.getElementById("btnAcordou").addEventListener("click", ()=>registrarSono('⏰ Acordou'));
 
 // Inicializa
 carregarAtividades();
 
-// === Slideshow de background ===
-const backgrounds = [
-  "img/foto1.jpg",
-  "img/foto2.jpg",
-  "img/foto3.jpg"
-];
-
+// Slideshow de fundo
+const backgrounds = ["img/foto1.jpg","img/foto2.jpg","img/foto3.jpg"];
 let index = 0;
 const body = document.body;
-
 function changeBackground() {
   body.style.backgroundImage = `url('${backgrounds[index]}')`;
   body.style.backgroundRepeat = "repeat";
@@ -273,6 +294,5 @@ function changeBackground() {
   body.style.backgroundSize = "contain";
   index = (index + 1) % backgrounds.length;
 }
-
 changeBackground();
 setInterval(changeBackground, 100000);
