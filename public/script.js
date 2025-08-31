@@ -27,11 +27,16 @@ function gerarDataComHora(horaInput) {
 }
 
 function parseBRDateTime(str){
+  // Caso venha em ISO do backend
+  if(str.includes("T")) return new Date(str);
+
+  // Caso venha em "31/08/2025, 14:30:00"
   const [datePart, timePart] = str.split(", ");
   const [day, month, year] = datePart.split("/").map(Number);
   const [h, m, s] = timePart.split(":").map(Number);
-  return new Date(year, month-1, day, h, m, s);
+  return new Date(year, month-1, day, h, m, s || 0);
 }
+
 
 // === Funções de registro ===
 async function salvarAtividade(atividade) {
