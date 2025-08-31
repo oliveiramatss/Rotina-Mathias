@@ -263,9 +263,9 @@ const body = document.body;
 
 function changeBackground() {
   body.style.backgroundImage = `url('${backgrounds[index]}')`;
-  body.style.backgroundRepeat = "no-repeat";
+  body.style.backgroundRepeat = "repeat";
   body.style.backgroundPosition = "center";
-  body.style.backgroundSize = "auto";
+  body.style.backgroundSize = "contain";
   index = (index + 1) % backgrounds.length;
 }
 
