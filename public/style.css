@@ -9,6 +9,7 @@ body {
   /* Inicial, será sobrescrito pelo JS */
   background-repeat: repeat;
   background-position: center; /* cada tile começa do canto */
+  background-size: contain;
  }
 
 h1,
