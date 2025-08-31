@@ -5,7 +5,7 @@ const API = "http://192.168.1.12:3000/atividades";
 
 // === Funções de exibição ===
 function esconderMenus() {
-  document.querySelectorAll("#alimentacaoOpcoes, #mamadeiraOpcoes, #comidaOpcoes, #fraldaOpcoes, #sonoOpcoes")
+  document.querySelectorAll("#alimentacaoOpcoes, #registrarMamadeiraComHora, #comidaOpcoes, #fraldaOpcoes, #sonoOpcoes")
     .forEach(el => el.classList.add("hidden"));
 }
 
@@ -255,7 +255,7 @@ const body = document.body;
 // Função para mudar o background
 function changeBackground() {
   body.style.backgroundImage = `url('${backgrounds[index]}')`;
-  body.style.backgroundRepeat = "repeat";   // garante repetição
+  body.style.backgroundRepeat = "no-repeat";   // garante repetição
   body.style.backgroundPosition = "center"; // centraliza cada tile
   body.style.backgroundSize = "auto";       // mantém tamanho original
 
