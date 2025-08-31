@@ -5,7 +5,7 @@ const API = "http://192.168.1.12:3000/atividades";
 
 // === Funções de exibição ===
 function esconderMenus() {
-  document.querySelectorAll("#alimentacaoOpcoes, #registrarMamadeiraComHora, #comidaOpcoes, #fraldaOpcoes, #sonoOpcoes")
+  document.querySelectorAll("#alimentacaoOpcoes, #mamadeiraOpcoes, #comidaOpcoes, #fraldaOpcoes, #sonoOpcoes")
     .forEach(el => el.classList.add("hidden"));
 }
 
@@ -134,13 +134,19 @@ async function carregarAtividades() {
 
   const dias = {};
   atividades.forEach(atv => {
-    const dia = atv.data.split(" ")[0];
-    if(!dias[dia]) dias[dia] = [];
-    dias[dia].push(atv);
+    const dataObj = parseBRDateTime(atv.data);
+    const diaStr = dataObj.toLocaleDateString("pt-BR");
+    if(!dias[diaStr]) dias[diaStr] = [];
+    dias[diaStr].push({ ...atv, dataObj });
   });
 
-  const diasOrdenados = Object.keys(dias).sort((a,b) => new Date(b) - new Date(a));
-  const hojeStr = new Date().toLocaleDateString('pt-BR');
+  const diasOrdenados = Object.keys(dias).sort((a,b) => {
+    const [da, ma, aa] = a.split("/").map(Number);
+    const [db, mb, ab] = b.split("/").map(Number);
+    return new Date(ab, mb-1, db) - new Date(aa, ma-1, da);
+  });
+
+  const hojeStr = new Date().toLocaleDateString("pt-BR");
 
   diasOrdenados.forEach(dia => {
     const diaDiv = document.createElement("div");
@@ -148,7 +154,7 @@ async function carregarAtividades() {
 
     const header = document.createElement("div");
     header.className = "dia-header";
-    header.textContent = dia.replace(/,\s*$/,"");
+    header.textContent = dia;
 
     const conteudo = document.createElement("div");
     conteudo.className = "dia-conteudo";
@@ -175,15 +181,18 @@ async function carregarAtividades() {
       titulo.textContent = cat;
       catDiv.appendChild(titulo);
 
-      categorias[cat].forEach(atv => {
-        const card = document.createElement("div");
-        card.className = "atividade";
-        const textoFormatado = atv.texto.replace(/,\s*$/,"");
-        card.innerHTML = `<p><b>${atv.data.split(" ")[1]}</b> → ${textoFormatado}</p>
-                          <button onclick="atualizarAtividadePrompt(${atv.id})">✏️ Editar</button>
-                          <button onclick="excluirAtividade(${atv.id})">❌ Excluir</button>`;
-        catDiv.appendChild(card);
-      });
+      categorias[cat]
+        .sort((a,b)=> b.dataObj - a.dataObj)
+        .forEach(atv => {
+          const card = document.createElement("div");
+          card.className = "atividade";
+
+          card.innerHTML = `<p><b>${atv.dataObj.toLocaleTimeString("pt-BR")}</b> → ${atv.texto}</p>
+                            <button onclick="atualizarAtividadePrompt(${atv.id})">✏️ Editar</button>
+                            <button onclick="excluirAtividade(${atv.id})">❌ Excluir</button>`;
+
+          catDiv.appendChild(card);
+        });
 
       conteudo.appendChild(catDiv);
     });
@@ -252,20 +261,13 @@ const backgrounds = [
 let index = 0;
 const body = document.body;
 
-// Função para mudar o background
 function changeBackground() {
   body.style.backgroundImage = `url('${backgrounds[index]}')`;
-  body.style.backgroundRepeat = "no-repeat";   // garante repetição
-  body.style.backgroundPosition = "center"; // centraliza cada tile
-  body.style.backgroundSize = "auto";       // mantém tamanho original
-
-  // Próxima imagem
+  body.style.backgroundRepeat = "no-repeat";
+  body.style.backgroundPosition = "center";
+  body.style.backgroundSize = "auto";
   index = (index + 1) % backgrounds.length;
 }
 
-// Inicializa com a primeira imagem
 changeBackground();
-
-// Troca de background a cada 1 minuto (100000 ms)
 setInterval(changeBackground, 100000);
-
